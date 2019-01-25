@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="wasm_exec.js"></script>
+    <script>
+        (async () => {
+            if (!WebAssembly) {
+                console.warn("WebAssembly is not supported in your browser")
+
+                return
+            }
+
+            // The wasm_exec.js file gives us access to the `new Go()`  
+            // constructor
+            const go = new Go();
+
+            // The `WebAssembly.instantiateStreaming` function is used to load 
+            // Wasm code and compile and instantiate a module
+            // The Fetch API is used to retrieve the Wasm file
+            const result = await WebAssembly.instantiateStreaming(
+                fetch("main.wasm"),
+                go.importObject
+            );
+
+            go.run(result.instance);
+        })();
+
+        function updateDOM(text) {
+            document.getElementById('wasm').innerText = text;
+        }
+    </script>
+</head>
+<body>
+    <h2 id="wasm"></h2>
+</body>
+</html>
